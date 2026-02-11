@@ -14,7 +14,7 @@ network_check
 update_os
 
 msg_info "Installing Dependencies"
-$STD apt install -y apt-transport-https
+$STD apt install -y apt-transport-https ca-certificates curl gpg
 msg_ok "Installed Dependencies"
 
 PG_VERSION="17" setup_postgresql
@@ -23,8 +23,8 @@ API_KEY=$(openssl rand -base64 18 | tr -dc 'a-zA-Z0-9' | cut -c1-13)
 echo "OpenProject API Key: $API_KEY" >>~/openproject.creds
 
 msg_info "Setting up OpenProject Repository"
-curl -fsSL "https://dl.packager.io/srv/opf/openproject/key" | gpg --dearmor >/etc/apt/trusted.gpg.d/packager-io.gpg
-curl -fsSL "https://dl.packager.io/srv/opf/openproject/stable/15/installer/debian/12.repo" -o "/etc/apt/sources.list.d/openproject.list"
+curl -fsSL "https://packages.openproject.com/srv/deb/opf/openproject/gpg-key.gpg" -o /usr/share/keyrings/openproject.gpg
+curl -fsSL "https://packages.openproject.com/srv/opf/openproject/stable/17/installer/debian/12.list" -o "/etc/apt/sources.list.d/openproject.list"
 $STD apt update
 msg_ok "Setup OpenProject Repository"
 
@@ -57,7 +57,7 @@ repositories/git-path /var/db/openproject/git
 repositories/git-http-backend /usr/lib/git-core/git-http-backend/
 memcached/autoinstall install
 openproject/admin_email admin@example.net
-openproject/default_language en
+openproject/default_language de
 EOF
 $STD sudo openproject configure
 msg_ok "Configured OpenProject"
